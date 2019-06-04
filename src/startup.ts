@@ -1,5 +1,5 @@
 import bodyParser from 'body-parser';
-//import config from 'config';
+import config from 'config';
 import express from 'express';
 
 import * as taskController from './Presenter/Controllers/taskController';
@@ -8,7 +8,7 @@ const app = express();
 const apiBasePath = '/api/v1';
 
 // Config Express
-app.set('port', /*config.get('server.port')*/8080);
+app.set('port', config.get('server.port'));
 app.use(bodyParser.json());
 
 // Config API routes

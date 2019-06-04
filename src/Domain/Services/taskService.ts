@@ -1,5 +1,3 @@
-import sequelize = require('sequelize');
-
 import { Task } from '../DbModels/task';
 import { TaskInDto } from '../Dto/TaskInDto';
 

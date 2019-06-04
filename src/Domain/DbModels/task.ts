@@ -1,4 +1,4 @@
-import { Model, DataTypes } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../Data/Database/dataBase';
 
 export class Task extends Model {
@@ -9,17 +9,17 @@ export class Task extends Model {
 
 Task.init({
     id: {
-        type: DataTypes.INTEGER,
         autoIncrement: true,
-        primaryKey: true
+        primaryKey: true,
+        type: DataTypes.INTEGER,
     },
     name: {
+        allowNull: false,
         type: new DataTypes.STRING(250),
-        allowNull: false
     },
     state: {
-        type: DataTypes.INTEGER,
         allowNull: false,
+        type: DataTypes.INTEGER,
     }
 }, {
     sequelize,
