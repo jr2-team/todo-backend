@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import express from 'express';
+import { check, validationResult } from 'express-validator/check';
 import TaskService from '../../Domain/Services/taskService';
 import { IExpressController } from './expressController';
-import { check, validationResult } from 'express-validator/check';
 
 export default class TaskController implements IExpressController {
     public controllerRoute: string;
@@ -26,39 +26,37 @@ export default class TaskController implements IExpressController {
             .delete(`${this.controllerRoute}/:taskId`, this.delete);
     }
 
-    public async getAll(req: Request, res: Response): Promise<void> {
+    public async getAll(req: Request, res: Response) {
         const tasks = await new TaskService().getAll();
         res.status(200).json(tasks);
     }
 
-    public async create(req: Request, res: Response): Promise<void | Response> {
+    public async create(req: Request, res: Response) {
         const validationErrors = validationResult(req);
         if (!validationErrors.isEmpty()) {
             return res.status(400).json({ errors: validationErrors.array() });
         }
-
-        const task = await new TaskService().create(req.body);
-        res.status(201).json(task);
+        await new TaskService().create(req.body)
+            .catch((err) => res.status(500).send(err))
+            .then((task) => res.status(201).json(task));
     }
 
-    public async update(req: Request, res: Response): Promise<void | Response> {
+    public async update(req: Request, res: Response) {
         const validationErrors = validationResult(req);
         if (!validationErrors.isEmpty()) {
             return res.status(400).json({ errors: validationErrors.array() });
         }
-
-        const taskId = Number(req.param('taskId'));
-        const task = await new TaskService().update(taskId, req.body);
-        if (task) {
-            res.status(200).json(task);
-        } else {
-            res.status(404);
-        }
-    }
-
-    public async delete(req: Request, res: Response): Promise<void> {
+        // TODO: Fix eternal request when taskId is undefined
         const taskId = Number(req.params.taskId);
-        await new TaskService().delete(taskId);
-        res.status(400);
+        await new TaskService().update(taskId, req.body)
+            .catch((err) => res.status(500).send(err))
+            .then((task) => task ? res.status(200).json(task) : res.status(404).send());
+    }
+
+    public async delete(req: Request, res: Response) {
+        const taskId = Number(req.params.taskId);
+        await new TaskService().delete(taskId)
+            .catch((err) => res.status(500).send(err))
+            .then((suc) => (suc) ? res.send(400) : res.status(404).send());
     }
 }

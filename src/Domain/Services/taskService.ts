@@ -1,3 +1,4 @@
+import { DeleteResult } from 'typeorm';
 import createConnection from '../../Data/Database/dataBase';
 import { Task } from '../DbModels/task';
 import { ITaskInDto } from '../Dto/taskInDto';
@@ -34,13 +35,11 @@ export default class TaskService {
         });
     }
 
-    public async delete(id: number): Promise<void> {
+    public async delete(id: number): Promise<DeleteResult | undefined> {
         return createConnection.then(async (connection) => {
             const taskRepository = connection.getRepository(Task);
             const task = await taskRepository.findOne(id);
-            if (task) {
-                await taskRepository.delete(id);
-            }
+            return task ? await taskRepository.delete(id) : undefined;
         });
     }
 }
