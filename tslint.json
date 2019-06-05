@@ -6,10 +6,10 @@
     "jsRules": {},
     "rules": {
         "eofline": false,
-        "quotemark": [
-            true,
-            "single"
-        ]
+        "quotemark": [true, "single"],
+        "max-line-length": [true, 100],
+        "curly": [true, "ignore-same-line"],
+        "no-console": [false, "log", "error"]
     },
     "rulesDirectory": []
 }

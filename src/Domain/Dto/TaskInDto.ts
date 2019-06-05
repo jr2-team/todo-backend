@@ -1,4 +1,4 @@
-export class TaskInDto {
-    public name!: string;
-    public state!: number;
+export interface ITaskInDto {
+    name: string;
+    state: string;
 }

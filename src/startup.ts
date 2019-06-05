@@ -1,21 +1,14 @@
-import bodyParser from 'body-parser';
 import config from 'config';
-import express from 'express';
+import 'reflect-metadata';
+import App from './app';
+import TaskController from './Presenter/Controllers/taskController';
 
-import * as taskController from './Presenter/Controllers/taskController';
+const app = new App(
+    [
+        new TaskController(),
+    ],
+    config.get('server.port'),
+);
+const server = app.listen();
 
-const app = express();
-const apiBasePath = '/api/v1';
-
-// Config Express
-app.set('port', config.get('server.port'));
-app.use(bodyParser.json());
-
-// Config API routes
-app.get(`${apiBasePath}/test`, (req, res) => {
-    res.send('Test');
-});
-app.get(`${apiBasePath}/tasks`, taskController.getAll);
-app.post(`${apiBasePath}/tasks`, taskController.create);
-
-export default app;
+export default server;

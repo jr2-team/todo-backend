@@ -1,14 +1,46 @@
+import createConnection from '../../Data/Database/dataBase';
 import { Task } from '../DbModels/task';
-import { TaskInDto } from '../Dto/TaskInDto';
+import { ITaskInDto } from '../Dto/taskInDto';
 
-export let getAll = async () => {
-    return await Task.findAll();
-};
+export default class TaskService {
+    public async getAll(): Promise<Task[]> {
+        return createConnection.then(async (connection) =>
+            await connection.getRepository(Task).find(),
+        );
+    }
 
-export let create = async (taskInDto: TaskInDto) => {
-    const task = await Task.create({
-        name: taskInDto.name,
-        state: taskInDto.state,
-    });
-    return task;
-};
+    public async create(taskInDto: ITaskInDto): Promise<Task> {
+        return createConnection.then(async (connection) => {
+            const taskRepository = connection.getRepository(Task);
+            const task = await taskRepository.create({
+                name: taskInDto.name,
+                state: Number(taskInDto.state),
+            });
+            return await taskRepository.save(task);
+        });
+    }
+
+    public async update(id: number, taskInDto: ITaskInDto): Promise<Task | undefined> {
+        return createConnection.then(async (connection) => {
+            const taskRepository = connection.getRepository(Task);
+            const task = await taskRepository.findOne(id);
+            if (task) {
+                await taskRepository.merge(task, {
+                    name: taskInDto.name,
+                    state: Number(taskInDto.state),
+                });
+            }
+            return task;
+        });
+    }
+
+    public async delete(id: number): Promise<void> {
+        return createConnection.then(async (connection) => {
+            const taskRepository = connection.getRepository(Task);
+            const task = await taskRepository.findOne(id);
+            if (task) {
+                await taskRepository.delete(id);
+            }
+        });
+    }
+}

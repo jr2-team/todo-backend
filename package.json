@@ -17,15 +17,16 @@
     "config": "^3.1.0",
     "errorhandler": "^1.5.1",
     "express": "^4.17.1",
-    "sequelize": "^5.8.7",
+    "reflect-metadata": "^0.1.13",
     "sqlite3": "^4.0.8",
     "tsconfig-paths": "^3.8.0",
     "tslint": "^5.17.0",
+    "typeorm": "^0.2.18",
     "typescript": "^3.5.1"
   },
   "scripts": {
     "start": "npm run exec",
-    "exec": "node build/app.js",
+    "exec": "node build/startup.js",
     "build-ts": "tsc"
   }
 }

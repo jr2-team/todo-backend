@@ -1,10 +1,13 @@
 import config from 'config';
-import { Sequelize } from 'sequelize';
+import { createConnection } from 'typeorm';
+import { Task } from '../../Domain/DbModels/task';
 
-const sequelize = new Sequelize(
-    `sqlite:
-    ${config.get('database.localPath')}
-    ${config.get('database.localFile')}`,
-);
+const dbConn = createConnection({
+    database: `${config.get('database.localPath')}${config.get('database.localFile')}`,
+    entities: [
+        Task,
+    ],
+    type: 'sqlite',
+});
 
-export default sequelize;
+export default dbConn;

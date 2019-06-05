@@ -1,28 +1,15 @@
-import { DataTypes, Model } from 'sequelize';
-import sequelize from '../../Data/Database/dataBase';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-export class Task extends Model {
+@Entity('tasks')
+export class Task {
+    @PrimaryGeneratedColumn()
     public id!: number;
+
+    @Column({
+        length: 250,
+    })
     public name!: string;
+
+    @Column()
     public state!: number;
 }
-
-Task.init({
-    id: {
-        autoIncrement: true,
-        primaryKey: true,
-        type: DataTypes.INTEGER,
-    },
-    name: {
-        allowNull: false,
-        type: new DataTypes.STRING(250),
-    },
-    state: {
-        allowNull: false,
-        type: DataTypes.INTEGER,
-    }
-}, {
-    sequelize,
-    tableName: 'tasks',
-    timestamps: false,
-});
