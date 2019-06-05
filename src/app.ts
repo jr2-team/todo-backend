@@ -1,6 +1,7 @@
 import bodyParser from 'body-parser';
 import errorhandler from 'errorhandler';
 import express from 'express';
+import expressValidator from 'express-validator';
 import { IExpressController } from './Presenter/Controllers/expressController';
 
 export default class App {
@@ -26,6 +27,7 @@ export default class App {
 
     private initMiddleware() {
         this.app.use(bodyParser.json());
+        this.app.use(expressValidator());
     }
 
     private initControllers(controllers: IExpressController[]) {
