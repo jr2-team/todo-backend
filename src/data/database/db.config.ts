@@ -1,13 +1,13 @@
 import config from 'config';
-import { createConnection } from 'typeorm';
-import { Task } from '../../Domain/DbModels/task';
+import { ConnectionOptions } from 'typeorm';
+import Task from '../../domain/db-model/Task';
 
-const dbConn = createConnection({
+const dbConfig: ConnectionOptions = {
     database: `${config.get('database.localPath')}${config.get('database.localFile')}`,
     entities: [
         Task,
     ],
     type: 'sqlite',
-});
+};
 
-export default dbConn;
+export default dbConfig;

@@ -1,6 +1,6 @@
 import express from 'express';
 
-export interface IExpressController {
+export default interface IExpressController {
     controllerRoute: string;
     router: express.Router;
 }
