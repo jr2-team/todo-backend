@@ -1,9 +1,9 @@
-import { Request, Response, Router, NextFunction } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 import TaskCreateDto from '../../domain/dto/TaskCreateDto';
 import TaskService from '../../domain/service/TaskService';
+import HttpException from '../../util/exception/HttpException';
 import validationMiddleware from '../../util/middleware/validator.middleware';
 import IExpressController from './ExpressController';
-import HttpException from '../../util/exception/HttpException';
 
 export default class TaskController implements IExpressController {
     public controllerRoute: string;
