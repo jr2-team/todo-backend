@@ -29,6 +29,15 @@ export default class ExpressApp {
 
     private initMiddleware() {
         this.app.use(bodyParser.json());
+        // TODO: remove, add CORS
+        this.app.use((req, res, next) => {
+            res.header('Access-Control-Allow-Origin', '*');
+            res.header(
+                'Access-Control-Allow-Headers',
+                'Origin, X-Requested-With, Content-Type, Accept',
+            );
+            next();
+          });
     }
 
     private initErrorHandling() {
