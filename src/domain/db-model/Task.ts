@@ -11,5 +11,5 @@ export default class Task {
     public name!: string
 
     @Column()
-    public state!: number
+    public status!: number
 }

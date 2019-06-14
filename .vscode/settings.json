@@ -1,0 +1,9 @@
+{
+    "sqltools.connections": [
+        {
+            "database": ".\\todo_db.db",
+            "dialect": "SQLite",
+            "name": "todo-db"
+        }
+    ]
+}

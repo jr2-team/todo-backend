@@ -6,5 +6,5 @@ export default class TaskCreateDto {
 
     @IsInt()
     @IsIn([ 0, 1 ])
-    public state!: number
+    public status!: number
 }

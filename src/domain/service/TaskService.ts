@@ -20,7 +20,7 @@ export default class TaskService {
     public async create(taskInDto: TaskCreateDto): Promise<Task> {
         const task = await this.taskDbRepository.create({
             name: taskInDto.name,
-            state: Number(taskInDto.state),
+            status: Number(taskInDto.status),
         })
         return await this.taskDbRepository.save(task)
     }
@@ -30,7 +30,7 @@ export default class TaskService {
         if (task) {
             await this.taskDbRepository.merge(task, {
                 name: taskInDto.name,
-                state: Number(taskInDto.state),
+                status: Number(taskInDto.status),
             })
         }
         return task
