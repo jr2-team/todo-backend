@@ -1,6 +1,6 @@
-import express from 'express';
+import express from 'express'
 
 export default interface IExpressController {
-    controllerRoute: string;
-    router: express.Router;
+    readonly controllerRoute: string
+    readonly router: express.Router
 }

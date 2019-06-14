@@ -9,7 +9,8 @@
         "quotemark": [true, "single"],
         "max-line-length": [true, 100],
         "curly": [true, "ignore-same-line"],
-        "no-console": [false, "log", "error"]
+        "no-console": false,
+        "semicolon": [true, "never"]
     },
     "rulesDirectory": []
 }
