@@ -7,6 +7,7 @@ import ExpressController from './presenter/controller/ExpressController'
 import TaskController from './presenter/controller/TaskController'
 import ExpressWebSocket from './presenter/websocket/ExpressWebSocket'
 import TaskWebSocket from './presenter/websocket/TaskWebSocket'
+import corsMiddleware from './util/middleware/cors.middleware'
 import errorMiddleware from './util/middleware/error.middleware'
 
 export default class ExpressApp {
@@ -39,15 +40,7 @@ export default class ExpressApp {
 
     private initMiddleware() {
         this.app.use(bodyParser.json())
-        // TODO: remove, add CORS
-        this.app.use((req, res, next) => {
-            res.header('Access-Control-Allow-Origin', '*')
-            res.header(
-                'Access-Control-Allow-Headers',
-                'Origin, X-Requested-With, Content-Type, Accept',
-            )
-            next()
-          })
+        this.app.use(corsMiddleware)
     }
 
     private initErrorHandling() {
