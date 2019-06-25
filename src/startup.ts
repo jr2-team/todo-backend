@@ -1,9 +1,9 @@
 import config from 'config'
 import 'reflect-metadata'
+import { Server as ServerIO } from 'socket.io'
 import { createConnection } from 'typeorm'
 import dbConfig from './data/database/db.config'
 import ExpressApp from './ExpressApp'
-import TaskController from './presenter/controller/TaskController'
 
 const initConnectionToDb = async () => {
     return await createConnection(dbConfig).catch((err) => {
@@ -13,15 +13,15 @@ const initConnectionToDb = async () => {
 }
 
 const initExpressApp = () => {
-    const availableControllers = [
-        new TaskController(),
-    ]
-    return new ExpressApp(availableControllers, config.get('server.port')).listen()
+    const expressApp = new ExpressApp(config.get('server.port'))
+    expressApp.listen()
 }
 
 const server = async () => {
     await initConnectionToDb()
     initExpressApp()
 }
+
+export let io: ServerIO
 
 export default server()

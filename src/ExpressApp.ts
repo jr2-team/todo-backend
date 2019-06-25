@@ -1,30 +1,40 @@
 import bodyParser from 'body-parser'
 import errorhandler from 'errorhandler'
 import express, { Application } from 'express'
-import IExpressController from './presenter/controller/ExpressController'
+import { Server as HttpServer } from 'http'
+import io, { Server as IOServer } from 'socket.io'
+import ExpressController from './presenter/controller/ExpressController'
+import TaskController from './presenter/controller/TaskController'
+import ExpressWebSocket from './presenter/websocket/ExpressWebSocket'
+import TaskWebSocket from './presenter/websocket/TaskWebSocket'
 import errorMiddleware from './util/middleware/error.middleware'
 
 export default class ExpressApp {
-    public app: Application
-    public port: number
-    public apiBasePath = '/api/v1'
+    public readonly app: Application
+    public readonly io: IOServer
+    public readonly port: number
+    public readonly apiBasePath = '/api/v1'
+    public readonly sioBasePath = '/sio/v1'
 
-    constructor(controllers: IExpressController[], port: number) {
+    constructor(port: number) {
         this.app = express()
+        this.io = io()
         this.port = port
         this.initMiddleware()
-        this.initControllers(controllers)
+        this.initControllers()
         this.initErrorHandling()
     }
 
     public listen() {
         this.app.set('port', this.port)
-        return this.app
+        const server = this.app
             .listen(this.port, () => {
-                console.log(`App is running at http://localhost:${this.port} in DEV mode`)
+                console.log(`App is running at http://localhost:${this.port}`)
                 console.log('  Press CTRL-C to stop\n')
             })
             .setTimeout(1000)
+        this.initWebSockets(server)
+        return server
     }
 
     private initMiddleware() {
@@ -45,9 +55,20 @@ export default class ExpressApp {
         this.app.use(errorhandler)
     }
 
-    private initControllers(controllers: IExpressController[]) {
+    private initControllers() {
+        const controllers: ExpressController[] = [
+            new TaskController('/tasks'),
+        ]
         controllers.forEach((controller) => {
             this.app.use(this.apiBasePath, controller.router)
         })
+    }
+
+    private initWebSockets(server: HttpServer) {
+        this.io.attach(server)
+        const webSockets: ExpressWebSocket[] = [
+            new TaskWebSocket(`${this.sioBasePath}/tasks`, this.io),
+        ]
+        webSockets.forEach((x) => x.onConnection())
     }
 }

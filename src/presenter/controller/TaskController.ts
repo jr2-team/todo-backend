@@ -1,31 +1,28 @@
-import { NextFunction, Request, Response, Router } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import TaskCreateDto from '../../domain/dto/TaskCreateDto'
 import TaskService from '../../domain/service/TaskService'
 import HttpException from '../../util/exception/HttpException'
 import validationMiddleware from '../../util/middleware/validator.middleware'
-import IExpressController from './ExpressController'
+import { receiveTasks } from '../websocket/TaskWebSocket'
+import ExpressController from './ExpressController'
 
-export default class TaskController implements IExpressController {
-    public readonly controllerRoute: string
-    public readonly router: Router
+export default class TaskController extends ExpressController {
 
-    constructor() {
-        this.controllerRoute = '/tasks'
-        this.router = Router()
-        this.initRoutes()
+    constructor(controllerNamespace: string) {
+        super(controllerNamespace)
     }
 
     public async initRoutes() {
         this.router
-            .get(`${this.controllerRoute}/:taskId`, this.getBy)
-            .get(this.controllerRoute, this.getAll)
-            .post(this.controllerRoute, await validationMiddleware(TaskCreateDto), this.create)
+            .get(`${this.controllerNamespace}/:taskId`, this.getBy)
+            .get(this.controllerNamespace, this.getAll)
+            .post(this.controllerNamespace, await validationMiddleware(TaskCreateDto), this.create)
             .put(
-                `${this.controllerRoute}/:taskId`,
+                `${this.controllerNamespace}/:taskId`,
                 await validationMiddleware(TaskCreateDto),
                 this.update,
             )
-            .delete(`${this.controllerRoute}/:taskId`, this.delete)
+            .delete(`${this.controllerNamespace}/:taskId`, this.delete)
     }
 
     public async getBy(req: Request, res: Response, next: NextFunction) {
@@ -38,7 +35,7 @@ export default class TaskController implements IExpressController {
 
     public async getAll(req: Request, res: Response, next: NextFunction) {
         await new TaskService().getAll()
-            .catch((err) => next(new HttpException(400, err)))
+            .catch((err: Error) => next(new HttpException(400, err.message)))
             .then((tasks) => res.status(200).json(tasks))
     }
 
@@ -46,8 +43,11 @@ export default class TaskController implements IExpressController {
         const taskCreateDto: TaskCreateDto = req.body
 
         await new TaskService().create(taskCreateDto)
+            .then(async (task) => {
+                res.status(201).json(task)
+                await receiveTasks()
+            })
             .catch((err) => next(new HttpException(400, err)))
-            .then((task) => res.status(201).json(task))
     }
 
     public async update(req: Request, res: Response, next: NextFunction) {
@@ -56,14 +56,24 @@ export default class TaskController implements IExpressController {
 
         await new TaskService().update(taskId, taskCreateDto)
             .catch((err) => next(new HttpException(400, err)))
-            .then((task) => task ? res.status(200).json(task) : res.sendStatus(404))
+            .then(async (task) => {
+                task ? res.status(200).json(task) : res.sendStatus(404)
+                await receiveTasks()
+            })
     }
 
     public async delete(req: Request, res: Response, next: NextFunction) {
         const taskId = Number(req.params.taskId)
 
         await new TaskService().delete(taskId)
+            .then(async (success) => {
+                if (success) {
+                    res.sendStatus(204)
+                    await receiveTasks()
+                } else {
+                    res.sendStatus(404)
+                }
+            })
             .catch((err) => next(new HttpException(400, err)))
-            .then((suc) => (suc) ? res.sendStatus(204) : res.sendStatus(404))
     }
 }
