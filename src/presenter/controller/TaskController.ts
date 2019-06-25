@@ -29,14 +29,14 @@ export default class TaskController extends ExpressController {
         const taskId = Number(req.params.taskId)
 
         await new TaskService().getById(taskId)
-            .catch((err) => next(new HttpException(400, err)))
             .then((task) => task ? res.status(200).json(task) : res.sendStatus(404))
+            .catch((err) => next(new HttpException(400, err)))
     }
 
     public async getAll(req: Request, res: Response, next: NextFunction) {
         await new TaskService().getAll()
-            .catch((err: Error) => next(new HttpException(400, err.message)))
             .then((tasks) => res.status(200).json(tasks))
+            .catch((err: Error) => next(new HttpException(400, err.message)))
     }
 
     public async create(req: Request, res: Response, next: NextFunction) {
@@ -55,11 +55,11 @@ export default class TaskController extends ExpressController {
         const taskCreateDto: TaskCreateDto = req.body
 
         await new TaskService().update(taskId, taskCreateDto)
-            .catch((err) => next(new HttpException(400, err)))
             .then(async (task) => {
                 task ? res.status(200).json(task) : res.sendStatus(404)
                 await receiveTasks()
             })
+            .catch((err) => next(new HttpException(400, err)))
     }
 
     public async delete(req: Request, res: Response, next: NextFunction) {
