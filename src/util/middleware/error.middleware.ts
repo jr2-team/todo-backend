@@ -6,7 +6,7 @@ const errorMiddleware = (
     req: Request, res: Response, next: NextFunction,
 ) => {
     const status = exception.status || 500
-    const message = exception.message || 'An error has ocurred'
+    const message = exception.message || 'An internal server error has ocurred'
     res.status(status).send({ status, message })
 }
 
