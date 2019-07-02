@@ -25,7 +25,7 @@ export default class TaskController extends ExpressController {
                 `${this.controllerNamespace}/:taskId`,
                 await validationMiddleware(TaskCreateDto),
                 this.update,
-                await socketIOMiddleware(receiveTasks),
+                await socketIOMiddleware(receiveTasks)
             )
             .delete(
                 `${this.controllerNamespace}/:taskId`,
@@ -52,8 +52,8 @@ export default class TaskController extends ExpressController {
         await new TaskService().create(taskCreateDto)
             .then(async (task) => {
                 res.status(201).json(task)
-                await receiveTasks()
             })
+        await next()
     }
 
     public async update(req: Request, res: Response, next: NextFunction) {
@@ -63,21 +63,15 @@ export default class TaskController extends ExpressController {
         await new TaskService().update(taskId, taskCreateDto)
             .then(async (task) => {
                 task ? res.status(200).json(task) : res.sendStatus(404)
-                await receiveTasks()
             })
+        await next()
     }
 
     public async delete(req: Request, res: Response, next: NextFunction) {
         const taskId = Number(req.params.taskId)
 
         await new TaskService().delete(taskId)
-            .then(async (success) => {
-                if (success) {
-                    res.sendStatus(204)
-                    await receiveTasks()
-                } else {
-                    res.sendStatus(404)
-                }
-            })
+            .then(async (success) => success ? res.sendStatus(204) : res.sendStatus(404))
+        await next()
     }
 }

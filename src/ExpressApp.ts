@@ -42,7 +42,7 @@ export default class ExpressApp {
     private initMiddleware() {
         this.app.use(bodyParser.json())
         this.app.use(corsMiddleware)
-        this.app.use(helmet())
+        //this.app.use(helmet())
     }
 
     private initErrorHandling() {
