@@ -1,10 +1,10 @@
 import { Namespace, Server } from 'socket.io'
 import TaskService from '../../domain/service/TaskService'
-import ExpressWebSocket from './ExpressWebSocket'
+import ExpressSocketIO from './ExpressSocketIO'
 
 let namespace: Namespace
 
-export default class TaskWebSocket extends ExpressWebSocket {
+export default class TaskSocketIO extends ExpressSocketIO {
     constructor(webSocketNamespace: string, io: Server) {
         super(webSocketNamespace, io)
         namespace = this.namespace

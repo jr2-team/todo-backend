@@ -6,8 +6,8 @@ import { Server as HttpServer } from 'http'
 import io, { Server as IOServer } from 'socket.io'
 import ExpressController from './presenter/controller/ExpressController'
 import TaskController from './presenter/controller/TaskController'
-import ExpressWebSocket from './presenter/websocket/ExpressWebSocket'
-import TaskWebSocket from './presenter/websocket/TaskWebSocket'
+import ExpressSocketIO from './presenter/websocket/ExpressSocketIO'
+import TaskSocketIO from './presenter/websocket/TaskSocketIO'
 import corsMiddleware from './util/middleware/cors.middleware'
 import errorMiddleware from './util/middleware/error.middleware'
 
@@ -61,8 +61,8 @@ export default class ExpressApp {
 
     private initWebSockets(server: HttpServer) {
         this.io.attach(server)
-        const webSockets: ExpressWebSocket[] = [
-            new TaskWebSocket(`${this.sioBasePath}/tasks`, this.io),
+        const webSockets: ExpressSocketIO[] = [
+            new TaskSocketIO(`${this.sioBasePath}/tasks`, this.io),
         ]
         webSockets.forEach((x) => x.onConnection())
     }

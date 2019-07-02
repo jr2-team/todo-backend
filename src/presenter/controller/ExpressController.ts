@@ -1,9 +1,8 @@
-import express from 'express'
 import { Router } from 'express'
 
 export default abstract class ExpressController {
     public readonly controllerNamespace: string
-    public readonly router: express.Router
+    public readonly router: Router
 
     constructor(controllerNamespace: string) {
         this.controllerNamespace = controllerNamespace
