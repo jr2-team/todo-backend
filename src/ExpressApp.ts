@@ -1,6 +1,7 @@
 import bodyParser from 'body-parser'
 import errorhandler from 'errorhandler'
 import express, { Application } from 'express'
+import helmet from 'helmet'
 import { Server as HttpServer } from 'http'
 import io, { Server as IOServer } from 'socket.io'
 import ExpressController from './presenter/controller/ExpressController'
@@ -41,11 +42,12 @@ export default class ExpressApp {
     private initMiddleware() {
         this.app.use(bodyParser.json())
         this.app.use(corsMiddleware)
+        this.app.use(helmet())
     }
 
     private initErrorHandling() {
         this.app.use(errorMiddleware)
-        this.app.use(errorhandler)
+        this.app.use(errorhandler())
     }
 
     private initControllers() {
