@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 import TaskCreateDto from '../../domain/dto/TaskCreateDto'
 import TaskService from '../../domain/service/TaskService'
-import socketIOMiddleware from '../../util/middleware/socketio.middleware'
+import socketMiddleware from '../../util/middleware/socket.middleware'
 import validationMiddleware from '../../util/middleware/validator.middleware'
-import { receiveTasks } from '../websocket/TaskSocketIO'
+import { receiveTasks } from '../websocket/TaskSocket'
 import ExpressController from './ExpressController'
 
 export default class TaskController extends ExpressController {
@@ -19,18 +19,18 @@ export default class TaskController extends ExpressController {
                 this.controllerNamespace,
                 await validationMiddleware(TaskCreateDto),
                 this.create,
-                await socketIOMiddleware(receiveTasks),
+                await socketMiddleware(receiveTasks),
             )
             .put(
                 `${this.controllerNamespace}/:taskId`,
                 await validationMiddleware(TaskCreateDto),
                 this.update,
-                await socketIOMiddleware(receiveTasks)
+                await socketMiddleware(receiveTasks),
             )
             .delete(
                 `${this.controllerNamespace}/:taskId`,
                 this.delete,
-                await socketIOMiddleware(receiveTasks),
+                await socketMiddleware(receiveTasks),
             )
     }
 

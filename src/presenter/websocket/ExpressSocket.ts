@@ -1,6 +1,6 @@
 import { Namespace, Server } from 'socket.io'
 
-export default abstract class ExpressSocketIO {
+export default abstract class ExpressSocket {
     public readonly webSocketNamespace: string
     public readonly namespace: Namespace
 
