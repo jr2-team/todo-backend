@@ -6,12 +6,12 @@ export default class Task {
     public id!: number
     @Column({ length: 250 })
     public name!: string
-    /*@Column({ length: 1000 })
+    @Column()
+    public status!: number
+    @Column({ length: 1000, nullable: true })
     public description?: string
     @Column({ name: 'completion_date', nullable: true })
     public completionDate?: Date
-    @Column({ name: 'creation_date', readonly: true })
-    public creationDate!: Date*/
-    @Column()
-    public status!: number
+    @Column({ name: 'creation_date' })
+    public creationDate?: Date
 }

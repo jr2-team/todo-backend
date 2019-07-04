@@ -34,19 +34,19 @@ export default class TaskController extends ExpressController {
             )
     }
 
-    public async getBy(req: Request, res: Response, next: NextFunction) {
+    private async getBy(req: Request, res: Response, next: NextFunction) {
         const taskId = Number(req.params.taskId)
 
         await new TaskService().getById(taskId)
             .then((task) => task ? res.status(200).json(task) : res.sendStatus(404))
     }
 
-    public async getAll(req: Request, res: Response, next: NextFunction) {
+    private async getAll(req: Request, res: Response, next: NextFunction) {
         await new TaskService().getAll()
             .then((tasks) => res.status(200).json(tasks))
     }
 
-    public async create(req: Request, res: Response, next: NextFunction) {
+    private async create(req: Request, res: Response, next: NextFunction) {
         const taskCreateDto: TaskCreateDto = req.body
 
         await new TaskService().create(taskCreateDto)
@@ -56,7 +56,7 @@ export default class TaskController extends ExpressController {
         await next()
     }
 
-    public async update(req: Request, res: Response, next: NextFunction) {
+    private async update(req: Request, res: Response, next: NextFunction) {
         const taskId = Number(req.params.taskId)
         const taskCreateDto: TaskCreateDto = req.body
 
@@ -67,7 +67,7 @@ export default class TaskController extends ExpressController {
         await next()
     }
 
-    public async delete(req: Request, res: Response, next: NextFunction) {
+    private async delete(req: Request, res: Response, next: NextFunction) {
         const taskId = Number(req.params.taskId)
 
         await new TaskService().delete(taskId)
