@@ -1,37 +1,36 @@
 import bodyParser from 'body-parser'
+import config from 'config'
 import errorhandler from 'errorhandler'
 import express, { Application } from 'express'
-import helmet from 'helmet'
 import { Server as HttpServer } from 'http'
 import io, { Server as IOServer } from 'socket.io'
+import getDbConnection from './data/database/Database'
 import ExpressController from './presenter/controller/ExpressController'
 import TaskController from './presenter/controller/TaskController'
 import ExpressSocket from './presenter/websocket/ExpressSocket'
 import TaskSocket from './presenter/websocket/TaskSocket'
 import corsMiddleware from './util/middleware/cors.middleware'
 import errorMiddleware from './util/middleware/error.middleware'
+import Database from './data/database/Database';
 
 export default class ExpressApp {
-    public readonly app: Application
-    public readonly io: IOServer
-    public readonly port: number
-    public readonly apiBasePath = '/api/v1'
-    public readonly sioBasePath = '/sio/v1'
+    private readonly app: Application
+    private readonly io: IOServer
+    private readonly apiBasePath = '/api/v1'
+    private readonly sioBasePath = '/sio/v1'
 
-    constructor(port: number) {
+    constructor() {
         this.app = express()
         this.io = io()
-        this.port = port
-        this.initMiddleware()
-        this.initControllers()
-        this.initErrorHandling()
     }
 
-    public listen() {
-        this.app.set('port', this.port)
+    public start = async () => {
+        await this.build()
+        const port = config.get('server.port')
+        this.app.set('port', port)
         const server = this.app
-            .listen(this.port, () => {
-                console.log(`App is running at http://localhost:${this.port}`)
+            .listen(port, () => {
+                console.log(`App is running at http://localhost:${port}`)
                 console.log('  Press CTRL-C to stop\n')
             })
             .setTimeout(1000)
@@ -39,18 +38,31 @@ export default class ExpressApp {
         return server
     }
 
-    private initMiddleware() {
-        this.app.use(bodyParser.json())
-        this.app.use(corsMiddleware)
-        //this.app.use(helmet())
+    private build = async () => {
+        await this.initConnectionToDb()
+        this.initMiddleware()
+        this.initControllers()
+        this.initErrorHandling()
     }
 
-    private initErrorHandling() {
+    private initConnectionToDb = async () => {
+        const connectionStr =
+            `${config.get('database.localPath')}${config.get('database.localFile')}`
+        await new Database(connectionStr).establishConnection()
+    }
+
+    private initMiddleware = () => {
+        this.app.use(bodyParser.json())
+        this.app.use(corsMiddleware)
+        // this.app.use(helmet())
+    }
+
+    private initErrorHandling = () => {
         this.app.use(errorMiddleware)
         this.app.use(errorhandler())
     }
 
-    private initControllers() {
+    private initControllers = () => {
         const controllers: ExpressController[] = [
             new TaskController('/tasks'),
         ]
@@ -59,7 +71,7 @@ export default class ExpressApp {
         })
     }
 
-    private initWebSockets(server: HttpServer) {
+    private initWebSockets = (server: HttpServer) => {
         this.io.attach(server)
         const webSockets: ExpressSocket[] = [
             new TaskSocket(`${this.sioBasePath}/tasks`, this.io),

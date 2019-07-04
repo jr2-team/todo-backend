@@ -2,7 +2,7 @@ import { Connection, ConnectionOptions, createConnection } from 'typeorm'
 import Task from '../../domain/db-model/Task'
 import IDatabase from './IDatabase'
 
-class DatabaseImpl implements IDatabase {
+export default class Database implements IDatabase {
     private readonly connectionOptions: ConnectionOptions
     private connection!: Connection
 
@@ -10,7 +10,7 @@ class DatabaseImpl implements IDatabase {
         this.connectionOptions = this.getConnectionOptions(connectionStr)
     }
 
-    public getConnection = async (): Promise<Connection> => {
+    public establishConnection = async (): Promise<Connection> => {
         if (!this.connection) {
             this.connection = await this.initConnectionToDb()
         }
@@ -31,8 +31,3 @@ class DatabaseImpl implements IDatabase {
             .catch((error: Error) => { throw error })
     }
 }
-
-const getDbConnection = async (connectionStr: string) =>
-    await new DatabaseImpl(connectionStr).getConnection()
-
-export default getDbConnection

@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import TaskService from '../../domain/service/TaskService'
 
 export default abstract class ExpressController {
     public readonly controllerNamespace: string

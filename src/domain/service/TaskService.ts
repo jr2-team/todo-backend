@@ -2,7 +2,7 @@ import { DeleteResult, getRepository, Repository } from 'typeorm'
 import Task from '../db-model/Task'
 import TaskCreateDto from '../dto/TaskCreateDto'
 
-const entityFromDto = (taskInDto: TaskCreateDto) => ({
+const getDataFromDto = (taskInDto: TaskCreateDto) => ({
     name: taskInDto.name,
     status: taskInDto.status,
     description: taskInDto.description,
@@ -26,14 +26,14 @@ export default class TaskService {
     }
 
     public async create(taskInDto: TaskCreateDto): Promise<Task> {
-        const task = await this.taskDbRepository.create(entityFromDto(taskInDto))
+        const task = await this.taskDbRepository.create(getDataFromDto(taskInDto))
         return await this.taskDbRepository.save(task)
     }
 
     public async update(id: number, taskInDto: TaskCreateDto): Promise<Task | undefined> {
         const task = await this.taskDbRepository.findOne(id)
         if (task) {
-            await this.taskDbRepository.update(id, entityFromDto(taskInDto))
+            await this.taskDbRepository.update(id, getDataFromDto(taskInDto))
         }
         return task
     }
